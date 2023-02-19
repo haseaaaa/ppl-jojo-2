@@ -35,8 +35,6 @@ sonarqube-check:
 deploy-railway:
   stage: deploy
   image: ubuntu
-  variables:
-    RAILWAY_TOKEN: $RAILWAY_TOKEN
 
   only:
     - main
