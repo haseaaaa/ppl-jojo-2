@@ -1,0 +1,32 @@
+image: python:3.8
+stages:
+  - sonarqube
+
+
+cache:
+  paths:
+    - .cache/pip
+
+.django_before_script: &django_before_script |-
+  pip install -r requirements.txt
+  python manage.py makemigrations
+  python manage.py migrate
+  python manage.py collectstatic --no-input
+
+sonarqube-check:
+  stage: sonarqube
+  image:
+    name: sonarsource/sonar-scanner-cli:latest
+    entrypoint: [ "" ]
+  variables:
+      # Defines the location of the analysis task cache
+    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+  cache:
+
+    paths:
+      - .sonar/cache
+  script:
+    - sonar-scanner -D"sonar.projectKey=denny.johannes_ppl1_AYZoVAXCoB3q0Wl8w4HK" -D"sonar.sources=." -D"sonar.host.url=https://sonarqube.cs.ui.ac.id" -D"sonar.login=879c7a0fade8f1582571d42a740aa1622ce77947"
+  only:
+    - main
+  allow_failure: true
