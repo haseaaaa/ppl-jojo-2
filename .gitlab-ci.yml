@@ -1,6 +1,7 @@
 image: python:3.8
 stages:
   - sonarqube
+  - deploy
 
 
 cache:
@@ -30,3 +31,16 @@ sonarqube-check:
   only:
     - main
   allow_failure: true
+
+deploy-railway:
+  stage: deploy
+  image: ubuntu
+  variables:
+    RAILWAY_TOKEN: $RAILWAY_TOKEN
+
+  only:
+    - main
+  script:
+    - apt-get update && apt-get install -y curl
+    - curl -fsSL https://railway.app/install.sh | sh
+    - railway up --service=$RAILWAY_SERVICE_NAME -d
